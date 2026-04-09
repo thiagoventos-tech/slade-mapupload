@@ -2,6 +2,9 @@
 title Lanzador de Panel Administrativo SLADE
 setlocal
 
+:: Asegurar que el script se ejecute en su propia carpeta
+cd /d "%~dp0"
+
 echo ======================================================
 echo    LANZADOR AUTOMATICO - PANEL ADMINISTRATIVO
 echo ======================================================

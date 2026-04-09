@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { fetchFtpFiles, submitFtpUpload, submitFtpDelete } from "@/app/actions/ftp";
+import { fetchFtpFiles, submitFtpUpload } from "@/app/actions/ftp";
 import styles from "./FileModule.module.css";
-import { Upload, RefreshCw, Trash2, File as FileIcon, Folder, Search, ArrowUp, ArrowDown } from "lucide-react";
+import { Upload, RefreshCw, File as FileIcon, Folder, Search, ArrowUp, ArrowDown } from "lucide-react";
 
 type RemoteFile = {
   name: string;
@@ -65,17 +65,7 @@ export default function FtpModule() {
     e.target.value = "";
   };
 
-  const handleDelete = async (fileName: string) => {
-    if (!window.confirm(`¿Estás seguro de que deseas eliminar ${fileName} del FastDL?`)) return;
 
-    setError("");
-    const result = await submitFtpDelete(fileName);
-    if (result.error) {
-      setError(result.error);
-    } else {
-      await loadFiles();
-    }
-  };
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return "0 B";
@@ -178,13 +168,13 @@ export default function FtpModule() {
               <th className={styles.sortableHeader} onClick={() => handleSort("modifyTime")}>
                 Fecha Modificación <SortIcon column="modifyTime" />
               </th>
-              <th>Acciones</th>
+
             </tr>
           </thead>
           <tbody>
             {displayFiles.length === 0 ? (
               <tr>
-                <td colSpan={4} className={styles.emptyState}>
+                <td colSpan={3} className={styles.emptyState}>
                   {filter ? "No se encontraron archivos con ese filtro" : "No hay archivos en el FastDL"}
                 </td>
               </tr>
@@ -199,15 +189,7 @@ export default function FtpModule() {
                   </td>
                   <td>{file.type === "d" ? "-" : formatSize(file.size)}</td>
                   <td>{file.modifyTime ? new Date(file.modifyTime).toLocaleString() : "-"}</td>
-                  <td>
-                    <button
-                      className={styles.deleteBtn}
-                      onClick={() => handleDelete(file.name)}
-                      title="Eliminar archivo"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
+
                 </tr>
               ))
             )}

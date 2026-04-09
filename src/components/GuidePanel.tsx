@@ -29,9 +29,33 @@ export default function GuidePanel() {
             <strong>Subir .bz2 al FastDL</strong>
             <p>
               Ir a la pestaña <em>FastDL (FTP)</em> y subir los archivos
-              comprimidos en formato <code>.bz2</code> (tanto .bsp.bz2 como
-              .nav.bz2).
+              comprimidos en formato <code>.bz2</code>.
             </p>
+          </div>
+        </div>
+
+        {/* Herramienta de Compresión movida debajo del paso 2 */}
+        <div className={styles.compressionBox}>
+          <div className={styles.compressionHeader}>
+            <Zap size={16} />
+            <span>Compresión .bz2</span>
+          </div>
+          <p className={styles.compressionDesc}>
+            Descargá esta herramienta para comprimir tus archivos rápidamente.
+          </p>
+          <a 
+            href={downloadUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className={styles.downloadBtn}
+          >
+            <Download size={16} /> Descargar Herramienta
+          </a>
+          <div className={styles.instruction}>
+            <strong>Uso:</strong> Arrastrá tus archivos a la herramienta y se comprimirán solos.
+          </div>
+          <div className={styles.warning}>
+            ⚠️ <strong>Importante:</strong> Hacelo después del Paso 1, ya que la herramienta transforma los archivos originales.
           </div>
         </div>
 
@@ -47,32 +71,8 @@ export default function GuidePanel() {
         </div>
       </div>
 
-      <div className={styles.compressionBox}>
-        <div className={styles.compressionHeader}>
-          <Zap size={16} />
-          <span>Herramienta de Compresión</span>
-        </div>
-        <p className={styles.compressionDesc}>
-          Descargá esta herramienta para comprimir tus archivos a .bz2 fácilmente.
-        </p>
-        <a 
-          href={downloadUrl} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className={styles.downloadBtn}
-        >
-          <Download size={16} /> Descargar Compresor
-        </a>
-        <div className={styles.instruction}>
-          <strong>Uso:</strong> Arrastrá tus archivos a la herramienta y se comprimirán solos.
-        </div>
-        <div className={styles.warning}>
-          ⚠️ <strong>Nota:</strong> Hacelo después del Paso 1, ya que la herramienta transforma los archivos originales.
-        </div>
-      </div>
-
       <div className={styles.example}>
-        <div className={styles.exampleTitle}>Ejemplo</div>
+        <div className={styles.exampleTitle}>Ejemplo del Paso 3</div>
         <p>
           Si el archivo se llama:<br />
           <code>2000_slade.bsp</code>

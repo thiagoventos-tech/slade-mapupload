@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { fetchFtpFiles, submitFtpUpload } from "@/app/actions/ftp";
+import { fetchFtpFiles } from "@/app/actions/ftp";
 import styles from "./FileModule.module.css";
 import { Upload, RefreshCw, File as FileIcon, Folder, Search, ArrowUp, ArrowDown } from "lucide-react";
 
@@ -55,9 +55,14 @@ export default function FtpModule() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const result = await submitFtpUpload(formData);
-    if (result.error) {
-      setError(result.error);
+    const response = await fetch("/api/upload/ftp", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+    if (!response.ok || result.error) {
+      setError(result.error || "Error desconocido");
     } else {
       await loadFiles();
     }

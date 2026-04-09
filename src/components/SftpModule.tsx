@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { fetchSftpFiles, submitSftpUpload } from "@/app/actions/sftp";
+import { fetchSftpFiles } from "@/app/actions/sftp";
 import styles from "./FileModule.module.css";
 import { Upload, RefreshCw, File as FileIcon, Folder, Search, ArrowUp, ArrowDown } from "lucide-react";
 
@@ -64,9 +64,14 @@ export default function SftpModule() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const result = await submitSftpUpload(formData);
-      if (result.error) {
-        errors.push(`${file.name}: ${result.error}`);
+      const response = await fetch("/api/upload/sftp", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (!response.ok || result.error) {
+        errors.push(`${file.name}: ${result.error || "Error desconocido"}`);
       }
     }
 

@@ -1,59 +1,68 @@
 @echo off
 title Lanzador de Panel Administrativo SLADE
-setlocal enabledelayedexpansion
+setlocal
 
 echo ======================================================
 echo    LANZADOR AUTOMATICO - PANEL ADMINISTRATIVO
 echo ======================================================
 echo.
 
-:: 1. Verificar Node.js
-node -v >node_version.txt 2>&1
+:: 1. Verificar si Node.js existe
+where node >nul 2>nul
 if %errorlevel% neq 0 (
-    echo [!] Node.js no detectado. Intentando instalar...
-    echo     Esto puede tardar un minuto y requerir permisos.
+    echo [!] Node.js NO esta instalado. 
+    echo [!] Intentando instalar Node.js automaticamente con winget...
     winget install OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements
+    
     if %errorlevel% neq 0 (
+        echo.
         echo [ERROR] No se pudo instalar Node.js automaticamente.
-        echo Por favor instala Node.js manualmente desde https://nodejs.org/
+        echo Por favor, ve a https://nodejs.org/ y descarga la version "LTS".
+        echo Despues de instalarlo, vuelve a ejecutar este archivo.
         pause
         exit /b
     )
-    echo [+] Node.js instalado correctamente.
-    :: Recargar path para reconocer node recien instalado
-    set "PATH=%PATH%;%ProgramFiles%\nodejs"
-) else (
-    echo [+] Node.js detectado.
+    echo.
+    echo [+] Node.js se ha instalado. 
+    echo [!] POR FAVOR, CIERRA ESTA VENTANA Y VUELVE A ABRIRLA para aplicar los cambios.
+    pause
+    exit /b
 )
 
-:: 2. Verificar dependencias
-if not exist "node_modules" (
-    echo [+] Instalando dependencias necesarias (solo la primera vez)...
-    call npm install --quiet
-)
+echo [+] Node.js detectado.
 
-:: 3. Verificar variables de entorno
-if not exist ".env.local" (
-    if exist ".env.example" (
-        echo [+] Configurando variables iniciales...
-        copy .env.example .env.local
-        echo [!] RECUERDA: Edita .env.local con las credenciales correctas.
+:: 2. Instalar dependencias si no existen
+if not exist "node_modules\" (
+    echo [+] Descargando librerias necesarias... esto puede tardar...
+    call npm install
+    if %errorlevel% neq 0 (
+        echo [ERROR] Hubo un problema instalando las librerias.
+        echo Revisa tu conexion a internet.
+        pause
+        exit /b
     )
 )
 
-:: 4. Iniciar la aplicacion
+:: 3. Configurar archivo .env si no existe
+if not exist ".env.local" (
+    if exist ".env.example" (
+        echo [+] Creando archivo de configuracion inicial...
+        copy .env.example .env.local
+        echo [!] Se ha creado .env.local. Asegurate de que tenga tus claves.
+    )
+)
+
+:: 4. Iniciar aplicacion
 echo.
 echo ======================================================
-echo    EL PANEL SE ESTA INICIANDO... 
-echo    Se abrira en tu navegador en breve.
-echo    NO CIERRES ESTA VENTANA MIENTRAS LO USES.
+echo    TODO LISTO. Presiona una tecla para abrir el panel.
 echo ======================================================
 echo.
+pause
 
-:: Abrir el navegador despues de unos segundos
-start "" "http://localhost:3000"
+start http://localhost:3000
+npm run dev
 
-:: Correr la app
-call npm run dev
-
+echo.
+echo [!] El servidor se ha detenido.
 pause

@@ -1,22 +1,22 @@
 "use server";
 
-import { readCfgFile, writeCfgFile } from "@/lib/sftp";
+import { readTextFile, writeTextFile } from "@/lib/sftp";
 import { revalidatePath } from "next/cache";
 
-export async function fetchCfgContent() {
+export async function fetchTextFileContent(fileKey: string) {
   try {
-    return await readCfgFile();
+    return await readTextFile(fileKey);
   } catch (error: any) {
-    throw new Error(error.message || "Error al obtener el archivo CFG");
+    throw new Error(error.message || "Error al obtener el archivo");
   }
 }
 
-export async function submitCfgSave(content: string) {
+export async function submitTextFileSave(fileKey: string, content: string) {
   try {
-    await writeCfgFile(content);
+    await writeTextFile(fileKey, content);
     revalidatePath("/");
     return { success: true };
   } catch (error: any) {
-    return { error: error.message || "Error al guardar el archivo CFG" };
+    return { error: error.message || "Error al guardar el archivo" };
   }
 }

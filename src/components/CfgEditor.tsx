@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchCfgContent, submitCfgSave } from "@/app/actions/cfg";
+import { fetchTextFileContent, submitTextFileSave } from "@/app/actions/cfg";
 import styles from "./CfgEditor.module.css";
 import { Save, RefreshCw } from "lucide-react";
 
-export default function CfgEditor() {
+interface CfgEditorProps {
+  fileKey: string;
+  fileName: string;
+}
+
+export default function CfgEditor({ fileKey, fileName }: CfgEditorProps) {
   const [content, setContent] = useState<string>("");
   const [originalContent, setOriginalContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -18,7 +23,7 @@ export default function CfgEditor() {
     setError("");
     setSuccess("");
     try {
-      const data = await fetchCfgContent();
+      const data = await fetchTextFileContent(fileKey);
       setContent(data);
       setOriginalContent(data);
     } catch (err: any) {
@@ -30,15 +35,15 @@ export default function CfgEditor() {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, [fileKey]);
 
   const handleSave = async () => {
-    if (!window.confirm("¿Estás seguro de guardar los cambios en mapcycle.txt?")) return;
+    if (!window.confirm(`¿Estás seguro de guardar los cambios en ${fileName}?`)) return;
 
     setSaving(true);
     setError("");
     setSuccess("");
-    const result = await submitCfgSave(content);
+    const result = await submitTextFileSave(fileKey, content);
     
     if (result.error) {
       setError(result.error);
@@ -55,7 +60,7 @@ export default function CfgEditor() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Editor de mapcycle.txt</h2>
+        <h2 className={styles.title}>Editor de {fileName}</h2>
         <div className={styles.actions}>
           <button className={styles.iconBtn} onClick={loadContent} disabled={loading || saving}>
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Recargar

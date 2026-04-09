@@ -62,11 +62,18 @@ export async function deleteSftpFile(fileName: string) {
   }
 }
 
-export async function readCfgFile() {
+const TEXT_FILE_PATHS: Record<string, string | undefined> = {
+  mapcycle: process.env.SFTP_TEXT_FILE_PATH,
+  maplist: process.env.SFTP_TEXT_FILE_PATH_2,
+};
+
+export async function readTextFile(fileKey: string) {
+  const filePath = TEXT_FILE_PATHS[fileKey];
+  if (!filePath) throw new Error(`Unknown file key: ${fileKey}`);
+
   const sftp = new Client();
   try {
     await sftp.connect(getSftpConfig());
-    const filePath = process.env.SFTP_TEXT_FILE_PATH!;
     const buffer = await sftp.get(filePath);
     return (buffer as Buffer).toString("utf-8");
   } finally {
@@ -74,11 +81,13 @@ export async function readCfgFile() {
   }
 }
 
-export async function writeCfgFile(content: string) {
+export async function writeTextFile(fileKey: string, content: string) {
+  const filePath = TEXT_FILE_PATHS[fileKey];
+  if (!filePath) throw new Error(`Unknown file key: ${fileKey}`);
+
   const sftp = new Client();
   try {
     await sftp.connect(getSftpConfig());
-    const filePath = process.env.SFTP_TEXT_FILE_PATH!;
     await sftp.put(Buffer.from(content, "utf-8"), filePath);
     return true;
   } finally {

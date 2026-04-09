@@ -1,7 +1,9 @@
 import styles from "./GuidePanel.module.css";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Download, Zap } from "lucide-react";
 
 export default function GuidePanel() {
+  const downloadUrl = "https://drive.usercontent.google.com/download?id=1Q9Ak_jcKARnJho10dEm-MgBCVkJyrenW&export=download&authuser=1&confirm=t&uuid=3d1e06dd-c937-49f8-b571-ddc525a8b3a0&at=ALBwUgm8G1TOeWm4lEyeD-SHpHpR:1775700758334";
+
   return (
     <div className={styles.guide}>
       <div className={styles.header}>
@@ -42,6 +44,30 @@ export default function GuidePanel() {
               agregar el nombre del mapa <strong>sin la extensión</strong>.
             </p>
           </div>
+        </div>
+      </div>
+
+      <div className={styles.compressionBox}>
+        <div className={styles.compressionHeader}>
+          <Zap size={16} />
+          <span>Herramienta de Compresión</span>
+        </div>
+        <p className={styles.compressionDesc}>
+          Descargá esta herramienta para comprimir tus archivos a .bz2 fácilmente.
+        </p>
+        <a 
+          href={downloadUrl} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className={styles.downloadBtn}
+        >
+          <Download size={16} /> Descargar Compresor
+        </a>
+        <div className={styles.instruction}>
+          <strong>Uso:</strong> Arrastrá tus archivos a la herramienta y se comprimirán solos.
+        </div>
+        <div className={styles.warning}>
+          ⚠️ <strong>Nota:</strong> Hacelo después del Paso 1, ya que la herramienta transforma los archivos originales.
         </div>
       </div>
 

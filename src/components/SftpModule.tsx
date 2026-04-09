@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { fetchSftpFiles, submitSftpUpload, submitSftpDelete } from "@/app/actions/sftp";
 import styles from "./FileModule.module.css";
-import { Upload, RefreshCw, Trash2, File as FileIcon, Folder } from "lucide-react";
+import { Upload, RefreshCw, Trash2, File as FileIcon, Folder, Search, ArrowUp, ArrowDown } from "lucide-react";
 
 type RemoteFile = {
   name: string;
@@ -12,11 +12,17 @@ type RemoteFile = {
   modifyTime: number;
 };
 
+type SortKey = "name" | "size" | "modifyTime";
+type SortDir = "asc" | "desc";
+
 export default function SftpModule() {
   const [files, setFiles] = useState<RemoteFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [filter, setFilter] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const loadFiles = async () => {
     setLoading(true);
@@ -51,7 +57,7 @@ export default function SftpModule() {
       await loadFiles();
     }
     setUploading(false);
-    e.target.value = ""; // reset input
+    e.target.value = "";
   };
 
   const handleDelete = async (fileName: string) => {
@@ -74,6 +80,45 @@ export default function SftpModule() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const SortIcon = ({ column }: { column: SortKey }) => {
+    if (sortKey !== column) return null;
+    return sortDir === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />;
+  };
+
+  const displayFiles = useMemo(() => {
+    let result = [...files];
+
+    // Filter
+    if (filter.trim()) {
+      const q = filter.toLowerCase();
+      result = result.filter((f) => f.name.toLowerCase().includes(q));
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "name") {
+        cmp = a.name.localeCompare(b.name);
+      } else if (sortKey === "size") {
+        cmp = a.size - b.size;
+      } else if (sortKey === "modifyTime") {
+        cmp = a.modifyTime - b.modifyTime;
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return result;
+  }, [files, filter, sortKey, sortDir]);
+
   return (
     <div>
       <div className={styles.header}>
@@ -94,6 +139,22 @@ export default function SftpModule() {
         </div>
       </div>
 
+      <div className={styles.filterBar}>
+        <Search size={16} className={styles.filterIcon} />
+        <input
+          type="text"
+          className={styles.filterInput}
+          placeholder="Buscar por nombre..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        />
+        {filter && (
+          <span className={styles.filterCount}>
+            {displayFiles.length} de {files.length}
+          </span>
+        )}
+      </div>
+
       {error && <div className={styles.error}>{error}</div>}
 
       {loading ? (
@@ -102,19 +163,27 @@ export default function SftpModule() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Tamaño</th>
-              <th>Fecha Modificación</th>
+              <th className={styles.sortableHeader} onClick={() => handleSort("name")}>
+                Nombre <SortIcon column="name" />
+              </th>
+              <th className={styles.sortableHeader} onClick={() => handleSort("size")}>
+                Tamaño <SortIcon column="size" />
+              </th>
+              <th className={styles.sortableHeader} onClick={() => handleSort("modifyTime")}>
+                Fecha Modificación <SortIcon column="modifyTime" />
+              </th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {files.length === 0 ? (
+            {displayFiles.length === 0 ? (
               <tr>
-                <td colSpan={4} className={styles.emptyState}>No hay archivos en esta carpeta</td>
+                <td colSpan={4} className={styles.emptyState}>
+                  {filter ? "No se encontraron archivos con ese filtro" : "No hay archivos en esta carpeta"}
+                </td>
               </tr>
             ) : (
-              files.map((file) => (
+              displayFiles.map((file) => (
                 <tr key={file.name}>
                   <td>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>

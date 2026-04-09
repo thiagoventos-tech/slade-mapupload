@@ -1,5 +1,7 @@
 "use server";
 
+export const maxDuration = 60; // Máximo permitido en Vercel Hobby tier
+
 import { listSftpFiles, uploadSftpFile, deleteSftpFile } from "@/lib/sftp";
 import { revalidatePath } from "next/cache";
 

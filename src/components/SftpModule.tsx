@@ -53,6 +53,13 @@ export default function SftpModule() {
 
     for (let i = 0; i < total; i++) {
       const file = selectedFiles[i];
+      const isMapFile = file.name.endsWith(".bsp") || file.name.endsWith(".nav");
+
+      if (!isMapFile) {
+        errors.push(`${file.name}: Solo se permiten archivos .bsp o .nav`);
+        continue;
+      }
+
       setUploadProgress(`Subiendo ${i + 1} de ${total}: ${file.name}`);
       const formData = new FormData();
       formData.append("file", file);
@@ -134,6 +141,7 @@ export default function SftpModule() {
             <input
               type="file"
               multiple
+              accept=".bsp,.nav"
               className={styles.uploadInput}
               onChange={handleUpload}
               disabled={uploading}

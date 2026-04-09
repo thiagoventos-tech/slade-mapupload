@@ -1,5 +1,6 @@
 import { logout } from "@/app/actions/auth";
 import DashboardWrapper from "@/components/DashboardWrapper";
+import GuidePanel from "@/components/GuidePanel";
 import styles from "./page.module.css";
 import { LogOut } from "lucide-react";
 
@@ -18,7 +19,14 @@ export default function Home() {
       </header>
 
       <section className={styles.content}>
-        <DashboardWrapper />
+        <div className={styles.layout}>
+          <div className={styles.mainPanel}>
+            <DashboardWrapper />
+          </div>
+          <aside className={styles.sidePanel}>
+            <GuidePanel />
+          </aside>
+        </div>
       </section>
     </main>
   );

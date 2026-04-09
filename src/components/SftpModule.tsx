@@ -20,6 +20,7 @@ export default function SftpModule() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
   const [filter, setFilter] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
@@ -42,21 +43,32 @@ export default function SftpModule() {
   }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFiles = e.target.files;
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
     setUploading(true);
     setError("");
-    const formData = new FormData();
-    formData.append("file", file);
+    const errors: string[] = [];
+    const total = selectedFiles.length;
 
-    const result = await submitSftpUpload(formData);
-    if (result.error) {
-      setError(result.error);
-    } else {
-      await loadFiles();
+    for (let i = 0; i < total; i++) {
+      const file = selectedFiles[i];
+      setUploadProgress(`Subiendo ${i + 1} de ${total}: ${file.name}`);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const result = await submitSftpUpload(formData);
+      if (result.error) {
+        errors.push(`${file.name}: ${result.error}`);
+      }
     }
+
+    if (errors.length > 0) {
+      setError(errors.join(" | "));
+    }
+    await loadFiles();
     setUploading(false);
+    setUploadProgress("");
     e.target.value = "";
   };
 
@@ -128,9 +140,10 @@ export default function SftpModule() {
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} /> Refrescar
           </button>
           <label className={styles.uploadLabel}>
-            <Upload size={16} /> {uploading ? "Subiendo..." : "Subir Archivo"}
+            <Upload size={16} /> {uploading ? "Subiendo..." : "Subir Archivos"}
             <input
               type="file"
+              multiple
               className={styles.uploadInput}
               onChange={handleUpload}
               disabled={uploading}
@@ -138,6 +151,8 @@ export default function SftpModule() {
           </label>
         </div>
       </div>
+
+      {uploadProgress && <div className={styles.uploadStatus}>{uploadProgress}</div>}
 
       <div className={styles.filterBar}>
         <Search size={16} className={styles.filterIcon} />

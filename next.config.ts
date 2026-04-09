@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "1000mb",
     },
     proxyClientMaxBodySize: "1000mb",
+    serverExternalPackages: ["ssh2", "ssh2-sftp-client"],
   },
 };
 

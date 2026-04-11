@@ -5,10 +5,10 @@ import SftpModule from "./SftpModule";
 import FtpModule from "./FtpModule";
 import CfgEditor from "./CfgEditor";
 import styles from "./DashboardWrapper.module.css";
-import { Server, Database, FileText, List } from "lucide-react";
+import { Server, Database, FileText } from "lucide-react";
 
 export default function DashboardWrapper() {
-  const [activeTab, setActiveTab] = useState<"sftp" | "ftp" | "mapcycle" | "maplist">("sftp");
+  const [activeTab, setActiveTab] = useState<"sftp" | "ftp" | "umi_mapcycle">("sftp");
 
   return (
     <div className={styles.container}>
@@ -26,24 +26,17 @@ export default function DashboardWrapper() {
           <Database size={18} /> FastDL (FTP)
         </button>
         <button
-          className={`${styles.tabBtn} ${activeTab === "mapcycle" ? styles.active : ""}`}
-          onClick={() => setActiveTab("mapcycle")}
+          className={`${styles.tabBtn} ${activeTab === "umi_mapcycle" ? styles.active : ""}`}
+          onClick={() => setActiveTab("umi_mapcycle")}
         >
-          <FileText size={18} /> mapcycle.txt
-        </button>
-        <button
-          className={`${styles.tabBtn} ${activeTab === "maplist" ? styles.active : ""}`}
-          onClick={() => setActiveTab("maplist")}
-        >
-          <List size={18} /> maplist.txt
+          <FileText size={18} /> umi_mapcycle.txt
         </button>
       </div>
 
       <div className={styles.moduleContainer}>
         {activeTab === "sftp" && <SftpModule />}
         {activeTab === "ftp" && <FtpModule />}
-        {activeTab === "mapcycle" && <CfgEditor fileKey="mapcycle" fileName="mapcycle.txt" />}
-        {activeTab === "maplist" && <CfgEditor fileKey="maplist" fileName="maplist.txt" />}
+        {activeTab === "umi_mapcycle" && <CfgEditor fileKey="umi_mapcycle" fileName="umi_mapcycle.txt" />}
       </div>
     </div>
   );

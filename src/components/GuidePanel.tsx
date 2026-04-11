@@ -62,9 +62,9 @@ export default function GuidePanel() {
         <div className={styles.step}>
           <span className={styles.stepNumber}>3</span>
           <div className={styles.stepContent}>
-            <strong>Agregar al mapcycle y maplist</strong>
+            <strong>Agregar al umi_mapcycle.txt</strong>
             <p>
-              Ir a las pestañas <em>mapcycle.txt</em> y <em>maplist.txt</em> y
+              Ir a la pestaña <em>umi_mapcycle.txt</em> y
               agregar el nombre del mapa <strong>sin la extensión</strong>.
             </p>
           </div>
@@ -78,7 +78,7 @@ export default function GuidePanel() {
           <code>2000_slade.bsp</code>
         </p>
         <p>
-          En los .txt escribir:<br />
+          En el .txt escribir:<br />
           <code>2000_slade</code>
         </p>
       </div>

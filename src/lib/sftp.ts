@@ -63,8 +63,7 @@ export async function deleteSftpFile(fileName: string) {
 }
 
 const TEXT_FILE_PATHS: Record<string, string | undefined> = {
-  mapcycle: process.env.SFTP_TEXT_FILE_PATH,
-  maplist: process.env.SFTP_TEXT_FILE_PATH_2,
+  umi_mapcycle: "/45.235.98.241_27055/addons/sourcemod/configs/umi_mapcycle.txt",
 };
 
 export async function readTextFile(fileKey: string) {
